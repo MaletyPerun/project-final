@@ -25,6 +25,8 @@ public class FileUtil {
             throw new IllegalRequestDataException("Select a file to upload.");
         }
 
+        // make to path
+
         File dir = new File(directoryPath);
         if (dir.exists() || dir.mkdirs()) {
             File file = new File(directoryPath + fileName);
