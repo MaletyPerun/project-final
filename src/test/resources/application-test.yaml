@@ -3,6 +3,7 @@ spring:
   init:
     mode: always
   datasource:
-    url: jdbc:postgresql://localhost:5445/jira
-    username: jira
-    password: JiraRush
+    driverClassName: org.h2.Driver
+    password: ''
+    url: jdbc:h2:mem
+    username: sa
