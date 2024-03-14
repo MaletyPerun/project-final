@@ -329,7 +329,7 @@ values ('todo', 'ToDo', 3, 'in_progress,canceled|'),
 drop index UK_USER_BELONG;
 create unique index UK_USER_BELONG on USER_BELONG (OBJECT_ID, OBJECT_TYPE, USER_ID, USER_TYPE_CODE) where ENDPOINT is null;
 
--- add times activities (with activity id)
+--changeset teplo:add_times_activities_(with_activity_id)
 insert
 into ACTIVITY ( ID, AUTHOR_ID, TASK_ID, UPDATED, STATUS_CODE )
 values (8, 2, 118, now(), 'in_progress'),
