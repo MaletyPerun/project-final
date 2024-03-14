@@ -27,6 +27,11 @@ public class ActivityService {
         }
     }
 
+    // TODO: 15.03.2024 status code:
+    //  1) in_progress, ready_for_review, review, ready_for_test, test, done
+    //  2) reverse status
+
+    // TODO: 15.03.2024 change a changelog?
     public Duration timeInWork(long taskId) {
         Task task = taskRepository.getExisted(taskId);
         List<Activity> activities = handler.getRepository().findAllByTaskIdOrderByUpdatedDesc(task.id());
@@ -34,6 +39,7 @@ public class ActivityService {
                 .filter(activity -> !activity.getStatusCode().equals("done"))
                 .toList();
 
+        System.out.printf("Time in work: %s", calculateDuration(activitiesInWork, "in_progress"));
         return calculateDuration(activitiesInWork, "in_progress");
     }
 
@@ -44,6 +50,7 @@ public class ActivityService {
                 .filter(activity -> !activity.getStatusCode().equals("in_progress"))
                 .toList();
 
+        System.out.printf("Time in test: %s", calculateDuration(activitiesInWork, "ready_for_review"));
         return calculateDuration(activitiesInWork, "ready_for_review");
     }
 
@@ -91,6 +98,8 @@ public class ActivityService {
 
     private void updateTaskIfRequired(long taskId, String activityStatus, String activityType) {
         if (activityStatus != null || activityType != null) {
+            timeInWork(taskId);
+            timeInTest(taskId);
             Task task = taskRepository.getExisted(taskId);
             List<Activity> activities = handler.getRepository().findAllByTaskIdOrderByUpdatedDesc(task.id());
             if (activityStatus != null) {
