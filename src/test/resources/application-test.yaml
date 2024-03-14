@@ -1,10 +1,10 @@
-spring.cache.type: none
 spring:
+  test:
+    database:
+      replace: none
   init:
     mode: always
   datasource:
-    driverClassName: org.h2.Driver
-    password: ''
-#    url: jdbc:h2:mem:project-final
-    url: dbc:h2:tcp://localhost:9092/mem:project-final
-    username: sa
+    url: jdbc:h2:mem:db;NON_KEYWORDS=VALUE
+  liquibase:
+    change-log: changelog_H2.sql
