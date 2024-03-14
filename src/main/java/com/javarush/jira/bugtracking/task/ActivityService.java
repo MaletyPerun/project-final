@@ -34,18 +34,7 @@ public class ActivityService {
                 .filter(activity -> !activity.getStatusCode().equals("done"))
                 .toList();
 
-        long totalTimeInSeconds = 0;
-        LocalDateTime lastInProgressTime = null;
-        for (Activity act : activitiesInWork) {
-            if (act.getStatusCode().equals("in_progress")) {
-                lastInProgressTime = act.getUpdated();
-            } else {
-                Duration lastDuration = Duration.between(lastInProgressTime, act.getUpdated());
-                totalTimeInSeconds += lastDuration.getSeconds();
-            }
-        }
-
-        return Duration.ofSeconds(totalTimeInSeconds);
+        return calculateDuration(activitiesInWork, "in_progress");
     }
 
     public Duration timeInTest(long taskId) {
@@ -55,17 +44,20 @@ public class ActivityService {
                 .filter(activity -> !activity.getStatusCode().equals("in_progress"))
                 .toList();
 
+        return calculateDuration(activitiesInWork, "ready_for_review");
+    }
+
+    private Duration calculateDuration(List<Activity> activities, String startStatus){
         long totalTimeInSeconds = 0;
         LocalDateTime lastInProgressTime = null;
-        for (Activity act : activitiesInWork) {
-            if (act.getStatusCode().equals("ready_for_review")) {
+        for (Activity act : activities) {
+            if (act.getStatusCode().equals(startStatus)) {
                 lastInProgressTime = act.getUpdated();
             } else {
                 Duration lastDuration = Duration.between(lastInProgressTime, act.getUpdated());
                 totalTimeInSeconds += lastDuration.getSeconds();
             }
         }
-
         return Duration.ofSeconds(totalTimeInSeconds);
     }
 
