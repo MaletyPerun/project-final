@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.javarush.jira.bugtracking.task.TaskUtil.getLatestValue;
@@ -23,6 +25,40 @@ public class ActivityService {
         if (activity.getAuthorId() != AuthUser.authId()) {
             throw new DataConflictException("Activity " + activity.getId() + " doesn't belong to " + AuthUser.get());
         }
+    }
+
+    public Duration timeInWork(long taskId) {
+        Task task = taskRepository.getExisted(taskId);
+        List<Activity> activities = handler.getRepository().findAllByTaskIdOrderByUpdatedDesc(task.id());
+        List<Activity> activitiesInWork = activities.stream()
+                .filter(activity -> !activity.getStatusCode().equals("done"))
+                .toList();
+
+        return calculateDuration(activitiesInWork, "in_progress");
+    }
+
+    public Duration timeInTest(long taskId) {
+        Task task = taskRepository.getExisted(taskId);
+        List<Activity> activities = handler.getRepository().findAllByTaskIdOrderByUpdatedDesc(task.id());
+        List<Activity> activitiesInWork = activities.stream()
+                .filter(activity -> !activity.getStatusCode().equals("in_progress"))
+                .toList();
+
+        return calculateDuration(activitiesInWork, "ready_for_review");
+    }
+
+    private Duration calculateDuration(List<Activity> activities, String startStatus){
+        long totalTimeInSeconds = 0;
+        LocalDateTime lastInProgressTime = null;
+        for (Activity act : activities) {
+            if (act.getStatusCode().equals(startStatus)) {
+                lastInProgressTime = act.getUpdated();
+            } else {
+                Duration lastDuration = Duration.between(lastInProgressTime, act.getUpdated());
+                totalTimeInSeconds += lastDuration.getSeconds();
+            }
+        }
+        return Duration.ofSeconds(totalTimeInSeconds);
     }
 
     @Transactional

@@ -328,3 +328,10 @@ values ('todo', 'ToDo', 3, 'in_progress,canceled|'),
 
 drop index UK_USER_BELONG;
 create unique index UK_USER_BELONG on USER_BELONG (OBJECT_ID, OBJECT_TYPE, USER_ID, USER_TYPE_CODE) where ENDPOINT is null;
+
+-- add times activities (with activity id)
+insert
+into ACTIVITY ( ID, AUTHOR_ID, TASK_ID, UPDATED, STATUS_CODE )
+values (8, 2, 118, now(), 'in_progress'),
+       (9, 2, 118, now() + interval '5 minutes', 'ready_for_review'),
+       (10, 2, 118, now() + interval '15 minutes', 'done');
