@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  app:
+    container_name: jira-app
+    image: jira
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8181:8181"
+    depends_on:
+      - db
+    environment:
+      - DATASOURCE_URL=jdbc:postgresql://jira-db:5440/jira
+      - DATASOURCE_USERNAME=jira
+      - DATASOURCE_PASSWORD=JiraRush
+    env_file:
+      - secret.env
+#    разобраться как использвоать
+    networks:
+      - backend
+
+  db:
+    container_name: jira-db
+    image: postgres:14.7-alpine
+    ports:
+      - "5440:5432"
+    environment:
+      - POSTGRES_USER=jira
+      - POSTGRES_PASSWORD=JiraRush
+      - POSTGRES_DB=jira
+#    volumes:
+#      взять из описания задания и разоабртсья
+    restart: unless-stopped
+    networks:
+      - backend
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    ports:
+      - "80:80"
+    environment:
+#      смотреть лекцию
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - backend
+    depends_on:
+      app:
+        condition: service_started
+
+networks:
+  backend:
+    driver: bridge

@@ -1,7 +1,10 @@
 FROM maven:3.8.4-openjdk-17 as builder
 WORKDIR /app
 COPY . /app/.
+#это не совсем правильно/хорошо
+#COPY resources ./app/resources/
 RUN mvn -f /app/pom.xml claen install -Dmaven.test.skip=true
+RUN #mvn claen package -DskipTests
 
 FROM openjdk:17
 WORKDIR /app
