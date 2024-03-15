@@ -190,16 +190,17 @@
                 <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <id>copy-secret-env</id>
+                        <id>copy-resources</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <outputDirectory>${basedir}/target/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}</directory>
+                                    <directory>/resources/</directory>
+                                    <filtering>true</filtering>
                                     <includes>
                                         <include>secret.env</include>
                                     </includes>
