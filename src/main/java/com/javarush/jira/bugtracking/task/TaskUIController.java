@@ -28,6 +28,7 @@ import static com.javarush.jira.ref.ReferenceService.getRefs;
 public class TaskUIController {
     static final String TASK_URL = "/ui/tasks";
 
+    private final ActivityService activityService;
     private final TaskService service;
     private final AttachmentRepository attachmentRepository;
     private final Handlers.ActivityHandler activityHandler;
@@ -46,8 +47,11 @@ public class TaskUIController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable long id, Model model) {
+
         log.info("show edit form for task {}", id);
         TaskToFull taskTo = service.get(id);
+        activityService.timeInWork(id);
+        activityService.timeInTest(id);
         addTaskInfo(model, taskTo);
         addRefs(model, taskTo.getStatusCode());
         return "task-edit";
