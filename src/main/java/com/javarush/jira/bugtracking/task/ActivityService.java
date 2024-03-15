@@ -124,8 +124,8 @@ public class ActivityService {
     public void update(ActivityTo activityTo, long id) {
         checkBelong(handler.getRepository().getExisted(activityTo.getId()));
         handler.updateFromTo(activityTo, id);
-        System.out.println(timeInWork(id));
-        System.out.println(timeInTest(id));
+//        System.out.println(timeInWork(id));
+//        System.out.println(timeInTest(id));
         updateTaskIfRequired(activityTo.getTaskId(), activityTo.getStatusCode(), activityTo.getTypeCode());
     }
 
@@ -139,8 +139,6 @@ public class ActivityService {
 
     private void updateTaskIfRequired(long taskId, String activityStatus, String activityType) {
         if (activityStatus != null || activityType != null) {
-            timeInWork(taskId);
-            timeInTest(taskId);
             Task task = taskRepository.getExisted(taskId);
             List<Activity> activities = handler.getRepository().findAllByTaskIdOrderByUpdatedDesc(task.id());
             if (activityStatus != null) {
