@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static com.javarush.jira.bugtracking.task.TaskUtil.getLatestValue;
@@ -35,38 +36,85 @@ public class ActivityService {
     public Duration timeInWork(long taskId) {
         Task task = taskRepository.getExisted(taskId);
         List<Activity> activities = handler.getRepository().findAllByTaskIdOrderByUpdatedDesc(task.id());
-        List<Activity> activitiesInWork = activities.stream()
-                .filter(activity -> !activity.getStatusCode().equals("done"))
-                .toList();
+        activities.sort(Collections.reverseOrder());
 
-        System.out.printf("Time in work: %s", calculateDuration(activitiesInWork, "in_progress"));
-        return calculateDuration(activitiesInWork, "in_progress");
+        boolean flag = false;
+        long seconds = 0;
+        LocalDateTime lastTime = null;
+
+        for (Activity activity : activities) {
+            if (activity.getStatusCode().equals("in_progress")) {
+                lastTime = activity.getUpdated();
+                if (lastTime == null) {
+                    lastTime = LocalDateTime.now();
+                }
+                flag = true;
+            } else if (activity.getStatusCode().equals("ready_for_review") && flag) {
+                Duration duration = Duration.between(lastTime, activity.getUpdated());
+                seconds += duration.getSeconds();
+                flag = false;
+            } else if (flag && activity.getStatusCode().equals("canceled")) {
+                Duration duration = Duration.between(lastTime, activity.getUpdated());
+                seconds += duration.getSeconds();
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            seconds += Duration.between(lastTime, LocalDateTime.now()).getSeconds();
+        }
+        System.out.printf("Time in work: %s", Duration.ofSeconds(seconds));
+        return Duration.ofSeconds(seconds);
+//        return calculateDuration(activitiesInWork, "in_progress");
     }
 
     public Duration timeInTest(long taskId) {
         Task task = taskRepository.getExisted(taskId);
         List<Activity> activities = handler.getRepository().findAllByTaskIdOrderByUpdatedDesc(task.id());
-        List<Activity> activitiesInWork = activities.stream()
-                .filter(activity -> !activity.getStatusCode().equals("in_progress"))
-                .toList();
+        activities.sort(Collections.reverseOrder());
 
-        System.out.printf("Time in test: %s", calculateDuration(activitiesInWork, "ready_for_review"));
-        return calculateDuration(activitiesInWork, "ready_for_review");
-    }
+        boolean flag = false;
+        long seconds = 0;
+        LocalDateTime lastTime = null;
 
-    private Duration calculateDuration(List<Activity> activities, String startStatus){
-        long totalTimeInSeconds = 0;
-        LocalDateTime lastInProgressTime = null;
-        for (Activity act : activities) {
-            if (act.getStatusCode().equals(startStatus)) {
-                lastInProgressTime = act.getUpdated();
-            } else {
-                Duration lastDuration = Duration.between(lastInProgressTime, act.getUpdated());
-                totalTimeInSeconds += lastDuration.getSeconds();
+        for (Activity activity : activities) {
+            if (activity.getStatusCode().equals("ready_for_review")) {
+                lastTime = activity.getUpdated();
+                if (lastTime == null) {
+                    lastTime = LocalDateTime.now();
+                }
+                flag = true;
+            } else if ((activity.getStatusCode().equals("done") || activity.getStatusCode().equals("canceled")) && flag) {
+                seconds += Duration.between(lastTime, activity.getUpdated()).getSeconds();
+                flag = false;
+                break;
+            } else if (activity.getStatusCode().equals("in_progress") && flag) {
+                seconds += Duration.between(lastTime, activity.getUpdated()).getSeconds();
+                flag = false;
             }
         }
-        return Duration.ofSeconds(totalTimeInSeconds);
+        if (flag) {
+            seconds += Duration.between(lastTime, LocalDateTime.now()).getSeconds();
+        }
+        System.out.printf("Time in test: %s", Duration.ofSeconds(seconds));
+        return Duration.ofSeconds(seconds);
+
+//        return calculateDuration(activitiesInWork, "ready_for_review");
     }
+
+//    private Duration calculateDuration(List<Activity> activities, String startStatus){
+//        long totalTimeInSeconds = 0;
+//        LocalDateTime lastInProgressTime = null;
+//        for (Activity act : activities) {
+//            if (act.getStatusCode().equals(startStatus)) {
+//                lastInProgressTime = act.getUpdated();
+//            } else {
+//                Duration lastDuration = Duration.between(lastInProgressTime, act.getUpdated());
+//                totalTimeInSeconds += lastDuration.getSeconds();
+//            }
+//        }
+//        return Duration.ofSeconds(totalTimeInSeconds);
+//    }
 
     @Transactional
     public Activity create(ActivityTo activityTo) {
