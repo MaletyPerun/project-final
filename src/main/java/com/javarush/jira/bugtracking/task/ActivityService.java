@@ -57,7 +57,7 @@ public class ActivityService {
             seconds += Duration.between(lastTime, LocalDateTime.now()).getSeconds();
         }
 
-        printTime(Duration.ofSeconds(seconds));
+        printTime(Duration.ofSeconds(seconds), "work");
         return Duration.ofSeconds(seconds);
     }
 
@@ -90,7 +90,7 @@ public class ActivityService {
         if (lastTime != null && isStartProccess) {
             seconds += Duration.between(lastTime, LocalDateTime.now()).getSeconds();
         }
-        printTime(Duration.ofSeconds(seconds));
+        printTime(Duration.ofSeconds(seconds), "test");
         return Duration.ofSeconds(seconds);
     }
 
@@ -99,8 +99,9 @@ public class ActivityService {
         return handler.getRepository().findAllByTaskIdOrderByUpdatedAsc(task.id());
     }
 
-    private void printTime(Duration secondsInProcess) {
-        System.out.printf("Time in work: %s days %s hours %s minutes\n",
+    private void printTime(Duration secondsInProcess, String process) {
+        System.out.printf("Time in %s: %s days %s hours %s minutes\n",
+                process,
                 secondsInProcess.toDays(),
                 secondsInProcess.toHours(),
                 secondsInProcess.toMinutes());
