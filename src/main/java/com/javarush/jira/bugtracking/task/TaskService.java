@@ -147,12 +147,14 @@ public class TaskService {
         return task.getTags();
     }
 
+    @Transactional
     public void addTagToTask(Long id, String tag) {
         Task task = Util.checkExist(id, handler.getRepository().findFullById(id));
         task.getTags().add(tag);
         handler.getRepository().save(task);
     }
 
+    @Transactional
     public void removeTagFromTask(Long id, String tag) {
         Task task = Util.checkExist(id, handler.getRepository().findFullById(id));
         task.getTags().remove(tag);
