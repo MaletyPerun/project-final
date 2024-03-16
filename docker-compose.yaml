@@ -15,8 +15,8 @@ services:
 #      - DATASOURCE_URL=jdbc:postgresql://jira-db:5450/jira
 #      - DATASOURCE_USERNAME=jira
 #      - DATASOURCE_PASSWORD=JiraRush
-#    env_file:
-#      - secret.env
+    env_file:
+      - secret.env
 #    разобраться как использвоать
     networks:
       - backend
