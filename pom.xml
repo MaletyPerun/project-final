@@ -186,6 +186,7 @@
             </plugin>
             <!-- Добавлен плагин для копирования файлов, включая secret.env -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.2.0</version>
                 <executions>
@@ -196,14 +197,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/resources</outputDirectory>
+                            <outputDirectory>${project.build.directory}/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>/resources/</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>secret.env</include>
-                                    </includes>
+                                    <directory>${project.basedir}/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
