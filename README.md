@@ -44,8 +44,6 @@
  - com.javarush.jira.bugtracking.task.ActivityService#timeInWork
  - com.javarush.jira.bugtracking.task.ActivityService#timeInTest
 ```
-Вызов методов:
-```com.javarush.jira.bugtracking.task.TaskUIController#showEditForm```
 9) Написать Dockerfile для основного сервера
 10) Написать docker-compose файл для запуска контейнера сервера вместе с БД и nginx
 11) Добавить локализацию минимум на двух языках для шаблонов писем (mails) и стартовой страницы index.html
