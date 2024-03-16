@@ -35,17 +35,20 @@
 6) Сделать рефакторинг метода 
 ```com.javarush.jira.bugtracking.attachment.FileUtil#upload```
 7) Добавления тегов к задаче:
-```
+```text
  - com.javarush.jira.bugtracking.task.TaskController
  - com.javarush.jira.bugtracking.task.TaskService
 ```
 8) Добавить подсчет времени сколько задача находилась в работе и тестировании:
-```
+```text
  - com.javarush.jira.bugtracking.task.ActivityService#timeInWork
  - com.javarush.jira.bugtracking.task.ActivityService#timeInTest
 ```
 Вызов методов:
-```com.javarush.jira.bugtracking.task.TaskUIController#showEditForm```
+```text
+com.javarush.jira.bugtracking.task.TaskUIController#showEditForm
+```
+
 9) Написать Dockerfile для основного сервера
 10) Написать docker-compose файл для запуска контейнера сервера вместе с БД и nginx
 11) Добавить локализацию минимум на двух языках для шаблонов писем (mails) и стартовой страницы index.html
