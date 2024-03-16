@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static com.javarush.jira.common.BaseHandler.createdResponse;
 
@@ -36,6 +37,7 @@ public class TaskController {
 
     private final TaskService taskService;
     private final ActivityService activityService;
+
     private final Handlers.TaskHandler handler;
     private final Handlers.ActivityHandler activityHandler;
     private final UserBelongRepository userBelongRepository;
@@ -156,4 +158,23 @@ public class TaskController {
             this(taskTo, new LinkedList<>());
         }
     }
+
+    @GetMapping("/{id}/tags")
+    public Set<String> getTagsForTask(@PathVariable Long id) {
+        return taskService.getTagsForTask(id);
+    }
+
+    @PostMapping(value = "/{id}/tags/", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void addTagToTask(@PathVariable Long id, @RequestBody String tag) {
+        taskService.addTagToTask(id, tag);
+    }
+
+    // Удалить тег из задачи
+    @DeleteMapping("/{id}/tags/{tag}")
+    public void removeTagFromTask(@PathVariable Long id, @PathVariable String tag) {
+        taskService.removeTagFromTask(id, tag);
+    }
+
+    // Получить все теги задачи
+
 }
