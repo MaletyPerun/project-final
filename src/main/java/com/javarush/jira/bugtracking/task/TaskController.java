@@ -169,12 +169,8 @@ public class TaskController {
         taskService.addTagToTask(id, tag);
     }
 
-    // Удалить тег из задачи
     @DeleteMapping("/{id}/tags/{tag}")
     public void removeTagFromTask(@PathVariable Long id, @PathVariable String tag) {
         taskService.removeTagFromTask(id, tag);
     }
-
-    // Получить все теги задачи
-
 }
